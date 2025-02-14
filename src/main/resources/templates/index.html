@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Scheduler</title>
+</head>
+<body>
+    <h1>Welcome to Discord Scheduler</h1>
+    <form id="messageForm">
+        <label for="text">Message:</label>
+        <input type="text" id="text" name="text" required>
+        <label for="scheduledDate">Scheduled Date:</label>
+        <input type="datetime-local" id="scheduledDate" name="scheduledDate" required>
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        document.getElementById('messageForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const message = {
+                text: document.getElementById('text').value,
+                scheduledDate: document.getElementById('scheduledDate').value
+            };
+            fetch('/api/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(message)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Message scheduled successfully!');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Failed to schedule message.');
+            });
+        });
+    </script>
+</body>
+</html>
