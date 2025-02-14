@@ -13,13 +13,20 @@ public class ScheduledTaskService {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private DiscordService discordService;
+
+    private static final String DISCORD_CHANNEL_ID = "1340013283993718864";
+
     @Scheduled(fixedRate = 60000) // Check every minute
     public void sendScheduledMessages() {
         List<Message> messages = messageService.getAllMessages();
         LocalDateTime now = LocalDateTime.now();
         for (Message message : messages) {
             if (message.getScheduledDate().isBefore(now) || message.getScheduledDate().isEqual(now)) {
-                // Send message to Discord (integration required)
+                // Send message to Discord
+                discordService.sendMessage(DISCORD_CHANNEL_ID, message.getText());
+                // Delete the message after sending
                 messageService.deleteMessage(message.getId());
             }
         }
