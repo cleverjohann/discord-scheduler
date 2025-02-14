@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord Scheduler</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 </head>
 <body>
-    <h1>Welcome to Discord Scheduler</h1>
-    <form id="messageForm">
-        <label for="text">Message:</label>
-        <input type="text" id="text" name="text" required>
-        <label for="scheduledDate">Scheduled Date:</label>
-        <input type="datetime-local" id="scheduledDate" name="scheduledDate" required>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container mt-5">
+        <h1 class="text-center">Welcome to Discord Scheduler</h1>
+        <form id="messageForm" class="mt-4">
+            <div class="form-group">
+                <label for="text">Message:</label>
+                <input type="text" id="text" name="text" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="scheduledDate">Scheduled Date:</label>
+                <input type="datetime-local" id="scheduledDate" name="scheduledDate" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="validationMessage" class="mt-3"></div>
+    </div>
     <script>
         document.getElementById('messageForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -21,6 +31,12 @@
                 text: document.getElementById('text').value,
                 scheduledDate: document.getElementById('scheduledDate').value
             };
+            const scheduledDate = new Date(message.scheduledDate);
+            const now = new Date();
+            if (scheduledDate <= now) {
+                document.getElementById('validationMessage').innerHTML = '<div class="alert alert-danger">Scheduled date and time must be in the future.</div>';
+                return;
+            }
             fetch('/api/message', {
                 method: 'POST',
                 headers: {
@@ -31,11 +47,12 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                alert('Message scheduled successfully!');
+                document.getElementById('validationMessage').innerHTML = '<div class="alert alert-success">Message scheduled successfully!</div>';
+                document.getElementById('messageForm').reset();
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('Failed to schedule message.');
+                document.getElementById('validationMessage').innerHTML = '<div class="alert alert-danger">Failed to schedule message.</div>';
             });
         });
     </script>
