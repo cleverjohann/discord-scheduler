@@ -16,7 +16,7 @@ public class ScheduledTaskService {
     @Autowired
     private DiscordService discordService;
 
-    private static final String DISCORD_CHANNEL_ID = "1340013283993718864";
+    private static final String DISCORD_CHANNEL_ID = "1000422489291227198";
 
     @Scheduled(fixedRate = 60000) // Check every minute
     public void sendScheduledMessages() {
